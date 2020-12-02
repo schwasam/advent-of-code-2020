@@ -21,35 +21,26 @@ namespace Day01
         private static (int val1, int val2, int prod) SolvePart1(IEnumerable<int> values)
         {
             const int expected = 2020;
-            var combinations = values.Select(value =>
-            {
-                var next = values.Where(x => value + x == expected).FirstOrDefault();
-                return (value, next);
-            }).ToList();
-            var result = combinations.FirstOrDefault(x => x.next != default);
+            var result = (from first in values
+                          from second in values.Skip(1)
+                          where first + second == expected
+                          select (first, second, first * second)
+            ).FirstOrDefault();
 
-            return (result.value, result.next, result.value * result.next);
+            return result;
         }
 
         private static (int val1, int val2, int val3, int prod) SolvePart2(IList<int> values)
         {
             const int expected = 2020;
+            var result = (from first in values
+                          from second in values.Skip(1)
+                          from third in values.Skip(2)
+                          where first + second + third == expected
+                          select (first, second, third, first * second * third)
+            ).FirstOrDefault();
 
-            for (int i = 0; i < values.Count(); i++)
-            {
-                for (int j = i + 1; j < values.Count(); j++)
-                {
-                    for (int k = j + 1; k < values.Count(); k++)
-                    {
-                        if (values[i] + values[j] + values[k] == expected)
-                        {
-                            return (values[i], values[j], values[k], values[i] * values[j] * values[k]);
-                        }
-                    }
-                }
-            }
-
-            return (0, 0, 0, 0);
+            return result;
         }
     }
 }
